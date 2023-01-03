@@ -12,8 +12,6 @@ function App() {
         <AuthProvider>
             <Router>
                 <div className="App">
-                    <Link to= "/login">Login</Link>
-                    <Link to= "/signup">Sign Up</Link>
                     <Routes>
                         <Route exact path="/" element={<Home/>}/>
                         <Route exact path="/login" element={<Login />}/>
