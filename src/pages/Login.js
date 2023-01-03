@@ -1,23 +1,26 @@
-import React, {useCallback, useContext, useEffect} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import app from "../firebase/config";
 import {AuthContext} from "../firebase/Auth";
-import {redirect, useNavigate,Link as LinkRouter} from "react-router-dom";
+import {useNavigate, Link as LinkRouter} from "react-router-dom";
 import {
-    Avatar,
     Box,
     Button,
-    Checkbox,
     Container,
     CssBaseline,
-    FormControlLabel, Grid, Link,
+    Grid,
     TextField,
     Typography
 } from "@mui/material";
+import CustomAlert from "../components/CustomAlert";
 
 const Login = () => {
     let navigate = useNavigate();
     const currentUser = useContext(AuthContext);
-
+    const [alertState, setAlertState] = useState({
+        show: false,
+        type: 'success',
+        text: ''
+    })
     const handleLogin = useCallback(async event => {
         event.preventDefault()
         const {email, password} = event.target.elements;
@@ -25,16 +28,30 @@ const Login = () => {
             await app
                 .auth()
                 .signInWithEmailAndPassword(email.value, password.value);
-            navigate('/', {replace: true})
+            setAlertState({
+                ...alertState, show: true, text: 'You are logged in successfully!'
+            })
+            setTimeout(() => {
+                navigate('/', {replace: true})
+            }, 2000)
         } catch (e) {
-            alert(e)
+            let text = ''
+            if (e.code === 'auth/user-not-found')
+                text = 'There is no user with this credentials'
+            else if (e.code === 'auth/invalid-email')
+                text = 'Enter correct email address'
+            else if (e.code === 'auth/invalid-password')
+                text = 'Enter correct password, it should be larger than 6 symbols'
+
+            setAlertState({
+                ...alertState, show: true, text: text, type: 'error'
+            })
         }
     }, [navigate])
     useEffect(() => {
         if (currentUser)
             navigate('/', {replace: true})
-
-    }, [currentUser, navigate])
+    }, [])
 
 
     return (
@@ -87,12 +104,13 @@ const Login = () => {
                             <Grid item>
                                 <Typography>
                                     {"Don't have an account? "}
-                                    <LinkRouter to= "/signup">Sign Up</LinkRouter>
+                                    <LinkRouter to="/signup">Sign Up</LinkRouter>
                                 </Typography>
                             </Grid>
                         </Grid>
                     </Box>
                 </Box>
+                <CustomAlert alert={alertState}/>
             </Container>
         </div>
     );

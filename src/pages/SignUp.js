@@ -1,21 +1,60 @@
-import React, {useCallback} from 'react';
-import app from "../firebase/config";
+import React, {useCallback, useState} from 'react';
+import app, {db} from "../firebase/config";
+import { doc, setDoc } from "firebase/firestore";
 import {Link as LinkRouter, useNavigate} from "react-router-dom";
 import {Box, Button, Container, CssBaseline, Grid, TextField, Typography} from "@mui/material";
+import CustomAlert from "../components/CustomAlert";
 
 const SignUp = () => {
     let navigate = useNavigate();
+    const [alertState, setAlertState] = useState({
+        show: false,
+        type: 'success',
+        text: ''
+    })
 
     const handleSignUp = useCallback(async event =>{
         event.preventDefault()
-        const {email,password} = event.target.elements;
+        const {email,password,password2, username} = event.target.elements;
+
+        if (username.value.length === 0){
+            setAlertState({
+                ...alertState, show: true, text: 'Your name must not be empty!', type: 'error'
+            })
+            return
+        }
+        else if (password.value !== password2.value){
+            setAlertState({
+                ...alertState, show: true, text: 'Fields with passwords must be identical', type: 'error'
+            })
+            return
+        }
         try {
-            await app
+
+            const data = await app
                 .auth()
                 .createUserWithEmailAndPassword(email.value,password.value);
-            navigate('/login', { replace: true })
+            await setDoc(doc(db, "users", data.user.uid), {name: username.value});
+            setAlertState({
+                ...alertState, show: true, text: 'You have created your account successfully!',type: 'success'
+            })
+            setTimeout(() => {
+                navigate('/login', { replace: true })
+            }, 2000)
         } catch (e) {
-            alert(e)
+            let text = ''
+
+            if (e.code === 'auth/user-not-found')
+                text = 'There is no user with this credentials'
+            else if (e.code === 'auth/invalid-email')
+                text = 'Enter correct email address'
+            else if (e.code === 'auth/invalid-password')
+                text = 'Enter correct password, it should be larger than 6 symbols'
+            else if (e.code === 'auth/email-already-in-use')
+                text = 'Account with this email is already exist'
+            setAlertState({
+                ...alertState, show: true, text: text, type: 'error'
+            })
         }
     },[navigate])
     return (
@@ -63,6 +102,16 @@ const SignUp = () => {
                             id="password"
                             autoComplete="current-password"
                         />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password2"
+                            label="Confirm password"
+                            type="password"
+                            id="password2"
+                            autoComplete="current-password2"
+                        />
 
                         <Button
                             type="submit"
@@ -83,6 +132,7 @@ const SignUp = () => {
                         </Grid>
                     </Box>
                 </Box>
+                <CustomAlert alert={alertState}/>
             </Container>
 
         </div>
