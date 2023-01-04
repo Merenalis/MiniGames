@@ -5,7 +5,7 @@ import {Link, useNavigate} from "react-router-dom";
 import app from "../firebase/config";
 import {Button, Fade} from "@mui/material";
 
-const Header = ({userData}) => {
+const Header = ({userData,fetchGamesData,setCategorySelect}) => {
     const currentUser = useContext(AuthContext);
     const {name} = userData || {};
     let navigate = useNavigate();
@@ -14,6 +14,10 @@ const Header = ({userData}) => {
 
     const handleMouseOver = () => {
         setIsHovering(true);
+    };
+    const headerLogoClick = () => {
+        setCategorySelect(0)
+        fetchGamesData()
     };
 
     const handleMouseOut = () => {
@@ -25,12 +29,14 @@ const Header = ({userData}) => {
             await app.auth().signOut()
             navigate('/login', {replace: true})
         } catch (e) {
-            alert(e)
+            console.log(e)
         }
     }, [navigate])
     return (
         <div className='header-wrapper'>
-            <h3 className='header-title'>CSN-GAMES</h3>
+            <h3 className='header-title' onClick={headerLogoClick}>CSN-GAMES</h3>
+
+
             <div className="wrapper-buttons">
                 {currentUser ?
                     (<div className='header-username-wrapper'>
@@ -42,7 +48,8 @@ const Header = ({userData}) => {
                                      onMouseOut={handleMouseOut}>
                                     <Link to="/favorites">Favorites</Link>
 
-                                    <Button onClick={logout} className='logout-btn' size="small" variant="contained">Sign out</Button>
+                                    <Button onClick={logout} className='logout-btn' size="small" variant="contained">Sign
+                                        out</Button>
                                 </div>
                             </Fade>
 

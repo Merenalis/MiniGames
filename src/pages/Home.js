@@ -2,10 +2,9 @@ import React, {useCallback, useContext, useEffect, useState} from 'react';
 import app, {db} from '../firebase/config'
 import {useNavigate} from "react-router-dom";
 import {AuthContext} from "../firebase/Auth";
-import {getDoc, doc, collection, query, getDocs, setDoc} from "firebase/firestore";
+import {getDoc, doc, collection, query, getDocs, setDoc,where} from "firebase/firestore";
 import Header from "../components/Header";
 import CategoriesSection from "../components/CategoriesSection";
-import {Card, CardActionArea, CardContent, CardMedia, Grid, Typography} from "@mui/material";
 import GameCard from "../components/GameCard";
 import firebase from "firebase/compat/app";
 
@@ -15,6 +14,7 @@ const Home = () => {
     const [userData, setUserData] = useState(null)
     const [gamesData, setGamesData] = useState(null)
     const [pending, setPending] = useState(true);
+    const [categorySelect, setCategorySelect] = useState(null);
 
     async function fetchUsersData() {
         const docUser = doc(db, "users", currentUser.uid);
@@ -29,6 +29,12 @@ const Home = () => {
 
     async function fetchGamesData() {
         const collectionGames = query(collection(db, "games"));
+        const querySnapshot = await getDocs(collectionGames);
+        setGamesData(querySnapshot.docs)
+    }
+    const updateData = async (value) => {
+        setCategorySelect(value)
+        const collectionGames = query(collection(db, "games"), where("category_id", "==", value));
         const querySnapshot = await getDocs(collectionGames);
         setGamesData(querySnapshot.docs)
     }
@@ -67,19 +73,23 @@ const Home = () => {
 
     return (
         <div>
-            <Header userData={userData}/>
+            <Header userData={userData} fetchGamesData={fetchGamesData} setCategorySelect={setCategorySelect}/>
             {/*Home*/}
             {/*<button onClick={functHui}>click</button>*/}
             <br/>
             <div className='home-content'>
 
-                <CategoriesSection/>
+                <CategoriesSection updateData={updateData} categorySelect={categorySelect}/>
                 <div className="games-wrapper">
-                    {gamesData.map((doc) => {
+                    {gamesData.length ? gamesData.map((doc) => {
                         return (
                             <GameCard game={doc.data()}/>
                         )
-                    })}
+                    }):
+                    <div>
+                        There are no games in this category...
+                    </div>
+                    }
                 </div>
             </div>
         </div>

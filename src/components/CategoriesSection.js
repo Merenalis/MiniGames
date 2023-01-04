@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import '../styles/CategoriesSection.scss'
 import Paper from '@mui/material/Paper';
 import {styled} from '@mui/material/styles';
@@ -15,15 +15,26 @@ const Item = styled(Paper)(({theme}) => ({
     justifyContent: 'center',
     cursor: 'pointer',
     paddingLeft: 15,
-    paddingRight: 15
+    paddingRight: 15,
+    '&.selected':{
+        background: 'wheat',
+    }
 }));
-const CategoriesSection = () => {
+const CategoriesSection = ({updateData,categorySelect}) => {
+    const [selectedId, setSelectedId] = React.useState();
+    const handleClick = id => e => {
+        setSelectedId(id);
+        updateData(id)
+    };
+    useEffect(()=>{
+        setSelectedId(categorySelect);
+    }, [categorySelect])
     return (
         <div className="categories-section-wrapper">
             {
                 categories.map((item) => {
                     return (
-                        <Item key={item.id}>
+                        <Item key={item.id} className={item.id === selectedId ? 'selected' : null} onClick={handleClick(item.id)}>
                             {item.name}
                         </Item>
                     )
