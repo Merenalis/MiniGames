@@ -3,7 +3,7 @@ import '../styles/Header.scss'
 import {AuthContext} from "../firebase/Auth";
 import {Link, useNavigate} from "react-router-dom";
 import app from "../firebase/config";
-import {Button} from "@mui/material";
+import {Button, Fade} from "@mui/material";
 
 const Header = ({userData}) => {
     const currentUser = useContext(AuthContext);
@@ -37,12 +37,15 @@ const Header = ({userData}) => {
                         <span className='header-username' onMouseOver={handleMouseOver}
                               onMouseOut={handleMouseOut}>{name}</span>
                         {isHovering && (
-                            <div className='username-hide-block' onMouseOver={handleMouseOver}
-                                 onMouseOut={handleMouseOut}>
-                                <Link to="/favorites">Favorites</Link>
+                            <Fade in={isHovering}>
+                                <div className='username-hide-block' onMouseOver={handleMouseOver}
+                                     onMouseOut={handleMouseOut}>
+                                    <Link to="/favorites">Favorites</Link>
 
-                                <Button onClick={logout} className='logout-btn' size="small" variant="contained">Sign out</Button>
-                            </div>
+                                    <Button onClick={logout} className='logout-btn' size="small" variant="contained">Sign out</Button>
+                                </div>
+                            </Fade>
+
                         )}
                     </div>) : (
                         <>
