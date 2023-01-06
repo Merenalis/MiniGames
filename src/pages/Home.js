@@ -2,11 +2,12 @@ import React, {useCallback, useContext, useEffect, useState} from 'react';
 import app, {db} from '../firebase/config'
 import {useNavigate} from "react-router-dom";
 import {AuthContext} from "../firebase/Auth";
-import {getDoc, doc, collection, query, getDocs, setDoc,where} from "firebase/firestore";
+import {getDoc, doc, collection, query, getDocs, setDoc, where, orderBy} from "firebase/firestore";
 import Header from "../components/Header";
 import CategoriesSection from "../components/CategoriesSection";
 import GameCard from "../components/GameCard";
 import firebase from "firebase/compat/app";
+import SearchComponent from "../components/SearchComponent";
 
 const Home = () => {
     let navigate = useNavigate();
@@ -15,6 +16,7 @@ const Home = () => {
     const [gamesData, setGamesData] = useState(null)
     const [pending, setPending] = useState(true);
     const [categorySelect, setCategorySelect] = useState(null);
+    const [sortSelect, setSortSelect] = useState('createdAt');
 
     async function fetchUsersData() {
         const docUser = doc(db, "users", currentUser.uid);
@@ -28,10 +30,36 @@ const Home = () => {
     }
 
     async function fetchGamesData() {
-        const collectionGames = query(collection(db, "games"));
+        const collectionGames = query(collection(db, "games"), orderBy('createdAt'));
         const querySnapshot = await getDocs(collectionGames);
         setGamesData(querySnapshot.docs)
     }
+
+    async function sortGamesData(option) {
+        if (option === 'rating'){
+            const collectionGames = query(collection(db, "games"), orderBy(option), orderBy('createdAt',"desc"));
+            const querySnapshot = await getDocs(collectionGames);
+            setGamesData(querySnapshot.docs.reverse())
+        }
+
+        else {
+            const collectionGames = query(collection(db, "games"), orderBy('createdAt'));
+            const querySnapshot = await getDocs(collectionGames);
+            setGamesData(querySnapshot.docs)
+        }
+
+    }
+
+    async function searchGamesData(text) {
+        const collectionGames = query(collection(db, "games")
+        );
+        const querySnapshot = await getDocs(collectionGames);
+        let filteredGames = querySnapshot.docs.filter(function (game) {
+            return game.data().name.toLowerCase().includes(text.toLowerCase())
+        })
+        setGamesData(filteredGames)
+    }
+
     const updateData = async (value) => {
         setCategorySelect(value)
         const collectionGames = query(collection(db, "games"), where("category_id", "==", value));
@@ -77,18 +105,19 @@ const Home = () => {
             {/*Home*/}
             {/*<button onClick={functHui}>click</button>*/}
             <br/>
+            <SearchComponent searchFunc={searchGamesData} sortGamesData={sortGamesData}/>
             <div className='home-content'>
 
                 <CategoriesSection updateData={updateData} categorySelect={categorySelect}/>
                 <div className="games-wrapper">
                     {gamesData.length ? gamesData.map((doc) => {
-                        return (
-                            <GameCard game={doc.data()}/>
-                        )
-                    }):
-                    <div>
-                        There are no games in this category...
-                    </div>
+                            return (
+                                <GameCard game={doc.data()}/>
+                            )
+                        }) :
+                        <div>
+                            There are no games in this category...
+                        </div>
                     }
                 </div>
             </div>
