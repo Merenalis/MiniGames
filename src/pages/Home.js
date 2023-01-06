@@ -110,9 +110,9 @@ const Home = () => {
 
                 <CategoriesSection updateData={updateData} categorySelect={categorySelect}/>
                 <div className="games-wrapper">
-                    {gamesData.length ? gamesData.map((doc) => {
+                    {gamesData.length ? gamesData.map((doc,index) => {
                             return (
-                                <GameCard game={doc.data()}/>
+                                <GameCard game={doc} key={index}/>
                             )
                         }) :
                         <div>

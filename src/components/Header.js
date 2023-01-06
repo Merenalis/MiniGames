@@ -16,6 +16,7 @@ const Header = ({userData,fetchGamesData,setCategorySelect}) => {
         setIsHovering(true);
     };
     const headerLogoClick = () => {
+        navigate('/', {replace: true})
         setCategorySelect(0)
         fetchGamesData()
     };
