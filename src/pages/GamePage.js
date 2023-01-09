@@ -12,11 +12,12 @@ import {AuthContext} from "../firebase/Auth";
 import {Button, IconButton} from "@mui/material";
 import {FavoriteBorder} from "@mui/icons-material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import {useNavigate} from "react-router-dom";
 
 const GamePage = () => {
     let {gameId} = useParams();
     const currentUser = useContext(AuthContext);
-
+    const navigate = useNavigate()
     const [pending, setPending] = useState(true);
     const [gameData, setGameData] = useState(null);
     const [gameCategory, setGameCategory] = useState(null);
@@ -28,6 +29,10 @@ const GamePage = () => {
     }, [])
 
     const handleRating = (rate) => {
+        if (!currentUser){
+            navigate('/login', { replace: true })
+            return
+        }
         setRating(rate)
         updateGameData(rate)
     }
@@ -58,7 +63,7 @@ const GamePage = () => {
             ) / docSnapGame.data().rating?.length;
 
             await setRating(sumRate ? sumRate : 0)
-            await fetchFavorites()
+            currentUser && await fetchFavorites()
             setPending(false)
 
         } else {
@@ -70,7 +75,7 @@ const GamePage = () => {
     async function updateGameData(rate) {
         const docGame = doc(db, "games", gameId);
         const gameRateArr = gameData.rating
-        const currentUserId = firebase.auth().currentUser.uid
+        const currentUserId = firebase.auth().currentUser?.uid
         const filteredGameRateArr = gameRateArr.filter(obj => obj.currentUserId !== currentUserId)
 
         await updateDoc(docGame, {
@@ -79,6 +84,10 @@ const GamePage = () => {
     }
 
     async function addToFavorites() {
+        if (!currentUser){
+            navigate('/login', { replace: true })
+            return
+        }
         const usersRef = collection(db, "users");
         await setDoc(doc(usersRef, currentUser.uid), {
             favorites: isFavorite ? arrayRemove(gameId) : arrayUnion(gameId)
