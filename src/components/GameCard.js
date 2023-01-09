@@ -6,7 +6,7 @@ import { Link as RouterLink } from 'react-router-dom'
 const GameCard = ({game}) => {
     const {image,name} = game.data()
     return (
-        <Card sx={{ maxWidth: 245,width: '100%',textAlign: 'center',marginBottom: 2}}>
+        <Card sx={{ textAlign: 'center',width: '15rem',height: '200px',}}>
             <CardActionArea component={RouterLink} to={`/game/${game.id}`}>
                 <CardMedia
                     component="img"

@@ -1,14 +1,12 @@
 import React from 'react';
 import {
-    Divider,
-    FormControl,
+        FormControl,
     IconButton,
     InputBase,
     InputLabel,
     MenuItem,
     Paper,
-    Select,
-    TextField
+    Select
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -27,8 +25,8 @@ const SearchComponent = ({searchFunc,sortGamesData}) => {
     }
 
     return (
-        <div>
-            <FormControl onSubmit={handleSearch}>
+        <>
+            <FormControl onSubmit={handleSearch} sx={{margin: '0 10px 15px 15px'}}>
             <Paper
                 component="form"
                 sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
@@ -38,7 +36,6 @@ const SearchComponent = ({searchFunc,sortGamesData}) => {
                         placeholder="Search..."
                         autoFocus
                         name='search'
-                        inputProps={{ 'aria-label': 'search google maps' }}
                     />
                     <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
                         <SearchIcon />
@@ -53,13 +50,14 @@ const SearchComponent = ({searchFunc,sortGamesData}) => {
                     id="demo-simple-select"
                     value={sort}
                     label="Sort"
+                    sx={{height:'48px'}}
                     onChange={handleChange}
                 >
                     <MenuItem value={'createdAt'}>Newest</MenuItem>
                     <MenuItem value={'rating'}>Rating</MenuItem>
                 </Select>
             </FormControl>
-        </div>
+        </>
     );
 };
 

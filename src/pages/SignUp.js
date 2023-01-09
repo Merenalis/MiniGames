@@ -34,7 +34,7 @@ const SignUp = () => {
             const data = await app
                 .auth()
                 .createUserWithEmailAndPassword(email.value,password.value);
-            await setDoc(doc(db, "users", data.user.uid), {name: username.value});
+            await setDoc(doc(db, "users", data.user.uid), {name: username.value,favorites:[null]});
             setAlertState({
                 ...alertState, show: true, text: 'You have created your account successfully!',type: 'success'
             })

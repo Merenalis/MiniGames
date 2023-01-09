@@ -5,7 +5,7 @@ import {Link, useNavigate} from "react-router-dom";
 import app from "../firebase/config";
 import {Button, Fade} from "@mui/material";
 
-const Header = ({userData,fetchGamesData,setCategorySelect}) => {
+const Header = ({userData,fetchGamesData,setCategorySelect,showFavorites}) => {
     const currentUser = useContext(AuthContext);
     const {name} = userData || {};
     let navigate = useNavigate();
@@ -47,7 +47,7 @@ const Header = ({userData,fetchGamesData,setCategorySelect}) => {
                             <Fade in={isHovering}>
                                 <div className='username-hide-block' onMouseOver={handleMouseOver}
                                      onMouseOut={handleMouseOut}>
-                                    <Link to="/favorites">Favorites</Link>
+                                    <Button onClick={showFavorites}>Favorites</Button>
 
                                     <Button onClick={logout} className='logout-btn' size="small" variant="contained">Sign
                                         out</Button>

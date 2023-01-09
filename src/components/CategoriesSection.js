@@ -16,6 +16,7 @@ const Item = styled(Paper)(({theme}) => ({
     cursor: 'pointer',
     paddingLeft: 15,
     paddingRight: 15,
+    width: '130px',
     '&.selected':{
         background: 'wheat',
     }

@@ -10,13 +10,21 @@ import firebase from "firebase/compat/app";
 import SearchComponent from "../components/SearchComponent";
 
 const Home = () => {
-    let navigate = useNavigate();
     const currentUser = useContext(AuthContext);
     const [userData, setUserData] = useState(null)
     const [gamesData, setGamesData] = useState(null)
-    const [pending, setPending] = useState(true);
     const [categorySelect, setCategorySelect] = useState(null);
-    const [sortSelect, setSortSelect] = useState('createdAt');
+
+    useEffect(() => {
+        try {
+            if (currentUser)
+                fetchUsersData()
+            fetchGamesData()
+
+        } catch (error) {
+            console.log(error)
+        }
+    }, [])
 
     async function fetchUsersData() {
         const docUser = doc(db, "users", currentUser.uid);
@@ -35,14 +43,20 @@ const Home = () => {
         setGamesData(querySnapshot.docs)
     }
 
+    async function showFavorites() {
+        let filteredGameRateArr = []
+        userData.favorites?.forEach((gameId) => {
+            filteredGameRateArr.push(...gamesData.filter(obj => obj.id === gameId))
+        })
+        setGamesData(filteredGameRateArr)
+    }
+
     async function sortGamesData(option) {
-        if (option === 'rating'){
-            const collectionGames = query(collection(db, "games"), orderBy(option), orderBy('createdAt',"desc"));
+        if (option === 'rating') {
+            const collectionGames = query(collection(db, "games"), orderBy(option), orderBy('createdAt', "desc"));
             const querySnapshot = await getDocs(collectionGames);
             setGamesData(querySnapshot.docs.reverse())
-        }
-
-        else {
+        } else {
             const collectionGames = query(collection(db, "games"), orderBy('createdAt'));
             const querySnapshot = await getDocs(collectionGames);
             setGamesData(querySnapshot.docs)
@@ -67,25 +81,6 @@ const Home = () => {
         setGamesData(querySnapshot.docs)
     }
 
-    useEffect(() => {
-        try {
-            if (currentUser)
-                fetchUsersData()
-            fetchGamesData()
-                .then(() => {
-                    setPending(false)
-                })
-
-
-        } catch (error) {
-            console.log(error)
-        }
-    }, [])
-
-    if (pending) {
-        return <>Loading...</>
-    }
-
     async function functHui() {
         const citiesRef = collection(db, "games");
         await setDoc(doc(citiesRef), {
@@ -94,23 +89,24 @@ const Home = () => {
             description: "You can explore treacherous mountainsides or kick up tons of dust in dry lake beds in this gorgeous 3D driving game. A huge map is waiting for you and you can head in any direction " +
                 "you feel like. The choice is yours but be careful, otherwise your car will get totally trashed.",
             image: 'https://images.crazygames.com/games/scrap-metal-3-infernal-trap/thumb-1555951535646.png?auto=format,compress&q=75&cs=strip',
-            rating: '5',
+            rating: [],
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
     }
 
     return (
         <div>
-            <Header userData={userData} fetchGamesData={fetchGamesData} setCategorySelect={setCategorySelect}/>
-            {/*Home*/}
-            {/*<button onClick={functHui}>click</button>*/}
+            <Header userData={userData} fetchGamesData={fetchGamesData} setCategorySelect={setCategorySelect}
+                    showFavorites={showFavorites}/>
             <br/>
-            <SearchComponent searchFunc={searchGamesData} sortGamesData={sortGamesData}/>
+            <div className="search-wrapper">
+                <SearchComponent searchFunc={searchGamesData} sortGamesData={sortGamesData}/>
+            </div>
             <div className='home-content'>
 
                 <CategoriesSection updateData={updateData} categorySelect={categorySelect}/>
                 <div className="games-wrapper">
-                    {gamesData.length ? gamesData.map((doc,index) => {
+                    {gamesData?.length ? gamesData.map((doc, index) => {
                             return (
                                 <GameCard game={doc} key={index}/>
                             )

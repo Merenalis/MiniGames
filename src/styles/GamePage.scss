@@ -14,16 +14,26 @@
     border-radius: 5px;
     padding: 15px;
     margin-right: 10px;
+    display: flex;
+    flex-direction: column;
 
     .game-name {
       text-transform: uppercase;
       color: white;
       font-size: 20px;
     }
+
     .game-category {
       font-style: italic;
       font-size: 16px;
       margin: 2px 0;
+    }
+
+    .game-rating {
+      width: 100%;
+      text-align: center;
+      margin-top: 15px;
+      flex-grow: 1;
     }
 
     @media screen and (max-width: 800px) {
