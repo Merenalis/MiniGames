@@ -1,18 +1,18 @@
 import React, {useContext, useEffect, useState} from 'react';
-import Header from "../components/Header";
+import {useNavigate} from "react-router-dom";
 import {useParams} from "react-router";
 import {doc, getDoc, updateDoc, setDoc, collection, arrayUnion,arrayRemove } from "firebase/firestore";
 import {db} from "../firebase/config";
-import {Rating} from 'react-simple-star-rating'
-
-import '../styles/GamePage.scss'
-import categories from "../mocks/categories";
 import firebase from "firebase/compat/app";
 import {AuthContext} from "../firebase/Auth";
 import {Button, IconButton} from "@mui/material";
 import {FavoriteBorder} from "@mui/icons-material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import {useNavigate} from "react-router-dom";
+import {Rating} from 'react-simple-star-rating'
+import categories from "../mocks/categories";
+import Header from "../components/Header";
+
+import '../styles/GamePage.scss'
 
 const GamePage = () => {
     let {gameId} = useParams();

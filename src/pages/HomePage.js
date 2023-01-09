@@ -1,12 +1,12 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
-import app, {db} from '../firebase/config'
-import {useNavigate} from "react-router-dom";
+import React, {useContext, useEffect, useState} from 'react';
+import {db} from '../firebase/config'
+import firebase from "firebase/compat/app";
 import {AuthContext} from "../firebase/Auth";
 import {getDoc, doc, collection, query, getDocs, setDoc, where, orderBy} from "firebase/firestore";
 import Header from "../components/Header";
 import CategoriesSection from "../components/CategoriesSection";
 import GameCard from "../components/GameCard";
-import firebase from "firebase/compat/app";
+
 import SearchComponent from "../components/SearchComponent";
 
 const HomePage = () => {
@@ -61,12 +61,10 @@ const HomePage = () => {
             const querySnapshot = await getDocs(collectionGames);
             setGamesData(querySnapshot.docs)
         }
-
     }
 
     async function searchGamesData(text) {
-        const collectionGames = query(collection(db, "games")
-        );
+        const collectionGames = query(collection(db, "games"));
         const querySnapshot = await getDocs(collectionGames);
         let filteredGames = querySnapshot.docs.filter(function (game) {
             return game.data().name.toLowerCase().includes(text.toLowerCase())
@@ -81,7 +79,7 @@ const HomePage = () => {
         setGamesData(querySnapshot.docs)
     }
 
-    async function functHui() {
+    async function addGameTemplate() {
         const citiesRef = collection(db, "games");
         await setDoc(doc(citiesRef), {
             name: "SCRAP METAL 3: INFERNAL TRAP",
