@@ -1,8 +1,9 @@
-import React, {useEffect} from 'react';
-import '../styles/CategoriesSection.scss'
+import React, {useEffect, useState} from 'react';
 import Paper from '@mui/material/Paper';
 import {styled} from '@mui/material/styles';
 import categories from "../mocks/categories";
+
+import '../styles/CategoriesSection.scss'
 
 const Item = styled(Paper)(({theme}) => ({
     ...theme.typography.body2,
@@ -21,15 +22,19 @@ const Item = styled(Paper)(({theme}) => ({
         background: 'wheat',
     }
 }));
+
 const CategoriesSection = ({updateData,categorySelect}) => {
-    const [selectedId, setSelectedId] = React.useState();
+    const [selectedId, setSelectedId] = useState();
+    
+    useEffect(()=>{
+        setSelectedId(categorySelect);
+    }, [categorySelect])
+
     const handleClick = id => e => {
         setSelectedId(id);
         updateData(id)
     };
-    useEffect(()=>{
-        setSelectedId(categorySelect);
-    }, [categorySelect])
+
     return (
         <div className="categories-section-wrapper">
             {
@@ -39,10 +44,8 @@ const CategoriesSection = ({updateData,categorySelect}) => {
                             {item.name}
                         </Item>
                     )
-
                 })
             }
-
         </div>
     );
 };

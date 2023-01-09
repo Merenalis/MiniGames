@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
         FormControl,
     IconButton,
@@ -11,13 +11,14 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 
 const SearchComponent = ({searchFunc,sortGamesData}) => {
-    const [sort, setSort] = React.useState('createdAt');
+    const [sort, setSort] = useState('createdAt');
 
     const handleChange = (event) => {
         setSort(event.target.value);
         console.log(event.target.value)
         sortGamesData(event.target.value)
     };
+
     function handleSearch(event) {
         const {search} = event.target.elements
         event.preventDefault()

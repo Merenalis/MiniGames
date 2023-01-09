@@ -5,16 +5,16 @@ import {Link, useNavigate} from "react-router-dom";
 import app from "../firebase/config";
 import {Button, Fade} from "@mui/material";
 
-const Header = ({userData,fetchGamesData,setCategorySelect,showFavorites}) => {
+const Header = ({userData, fetchGamesData, setCategorySelect, showFavorites}) => {
     const currentUser = useContext(AuthContext);
     const {name} = userData || {};
     let navigate = useNavigate();
-
     const [isHovering, setIsHovering] = useState(false);
 
     const handleMouseOver = () => {
         setIsHovering(true);
     };
+
     const headerLogoClick = () => {
         navigate('/', {replace: true})
         setCategorySelect(0)
@@ -24,6 +24,7 @@ const Header = ({userData,fetchGamesData,setCategorySelect,showFavorites}) => {
     const handleMouseOut = () => {
         setIsHovering(false);
     };
+
     const logout = useCallback(async event => {
         event.preventDefault()
         try {
@@ -33,37 +34,29 @@ const Header = ({userData,fetchGamesData,setCategorySelect,showFavorites}) => {
             console.log(e)
         }
     }, [navigate])
-    return (
-        <div className='header-wrapper'>
+
+    return (<div className='header-wrapper'>
             <h3 className='header-title' onClick={headerLogoClick}>CSN-GAMES</h3>
-
-
             <div className="wrapper-buttons">
                 {currentUser ?
                     (<div className='header-username-wrapper'>
                         <span className='header-username' onMouseOver={handleMouseOver}
                               onMouseOut={handleMouseOut}>{name}</span>
-                        {isHovering && (
-                            <Fade in={isHovering}>
-                                <div className='username-hide-block' onMouseOver={handleMouseOver}
-                                     onMouseOut={handleMouseOut}>
-                                    <Button onClick={showFavorites}>Favorites</Button>
+                    {isHovering && (<Fade in={isHovering}>
+                            <div className='username-hide-block' onMouseOver={handleMouseOver}
+                                 onMouseOut={handleMouseOut}>
+                                <Button onClick={showFavorites}>Favorites</Button>
+                                <Button onClick={logout} className='logout-btn' size="small" variant="contained">Sign
+                                    out</Button>
+                            </div>
+                        </Fade>
 
-                                    <Button onClick={logout} className='logout-btn' size="small" variant="contained">Sign
-                                        out</Button>
-                                </div>
-                            </Fade>
-
-                        )}
-                    </div>) : (
-                        <>
-                            <Link to="/login">Login</Link>
-                        </>
-                    )
-                }
+                    )}
+                </div>) : (<>
+                        <Link to="/login">Login</Link>
+                    </>)}
             </div>
-        </div>
-    );
+        </div>);
 };
 
 export default Header;

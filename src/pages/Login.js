@@ -21,6 +21,12 @@ const Login = () => {
         type: 'success',
         text: ''
     })
+
+    useEffect(() => {
+        if (currentUser)
+            navigate('/', {replace: true})
+    }, [])
+
     const handleLogin = useCallback(async event => {
         event.preventDefault()
         const {email, password} = event.target.elements;
@@ -48,11 +54,6 @@ const Login = () => {
             })
         }
     }, [navigate])
-    useEffect(() => {
-        if (currentUser)
-            navigate('/', {replace: true})
-    }, [])
-
 
     return (
         <div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Box, Button, Typography} from "@mui/material";
 import { purple } from '@mui/material/colors';
-import {Link, redirect, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 const NotFoundPage = () => {
     let navigate = useNavigate();

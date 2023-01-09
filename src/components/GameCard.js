@@ -1,10 +1,10 @@
 import React from 'react';
 import {Card, CardActionArea, CardContent, CardMedia, Typography} from "@mui/material";
-import GamePage from "../pages/GamePage";
 import { Link as RouterLink } from 'react-router-dom'
 
 const GameCard = ({game}) => {
     const {image,name} = game.data()
+
     return (
         <Card sx={{ textAlign: 'center',width: '15rem',height: '200px',}}>
             <CardActionArea component={RouterLink} to={`/game/${game.id}`}>

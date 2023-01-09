@@ -57,6 +57,7 @@ const SignUp = () => {
             })
         }
     },[navigate])
+
     return (
         <div>
             <Container component="main" maxWidth="xs">

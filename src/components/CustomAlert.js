@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import {Alert, Collapse, Fade} from "@mui/material";
+import {Alert, Fade} from "@mui/material";
 
 const CustomAlert = ({alert}) => {
     const {show,type,text} = alert

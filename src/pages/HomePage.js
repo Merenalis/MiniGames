@@ -9,7 +9,7 @@ import GameCard from "../components/GameCard";
 import firebase from "firebase/compat/app";
 import SearchComponent from "../components/SearchComponent";
 
-const Home = () => {
+const HomePage = () => {
     const currentUser = useContext(AuthContext);
     const [userData, setUserData] = useState(null)
     const [gamesData, setGamesData] = useState(null)
@@ -99,11 +99,8 @@ const Home = () => {
             <Header userData={userData} fetchGamesData={fetchGamesData} setCategorySelect={setCategorySelect}
                     showFavorites={showFavorites}/>
             <br/>
-            <div className="search-wrapper">
-                <SearchComponent searchFunc={searchGamesData} sortGamesData={sortGamesData}/>
-            </div>
+            <SearchComponent searchFunc={searchGamesData} sortGamesData={sortGamesData}/>
             <div className='home-content'>
-
                 <CategoriesSection updateData={updateData} categorySelect={categorySelect}/>
                 <div className="games-wrapper">
                     {gamesData?.length ? gamesData.map((doc, index) => {
@@ -121,4 +118,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default HomePage;
