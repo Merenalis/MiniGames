@@ -25,11 +25,7 @@ a {
   align-items: flex-start;
 
 }
-.games-wrapper{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
+
 *{
   box-sizing: border-box;
 }

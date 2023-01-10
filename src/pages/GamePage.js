@@ -1,7 +1,18 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {useParams} from "react-router";
-import {doc, getDoc, updateDoc, setDoc, collection, arrayUnion,arrayRemove } from "firebase/firestore";
+import {
+    doc,
+    getDoc,
+    updateDoc,
+    setDoc,
+    collection,
+    arrayUnion,
+    arrayRemove,
+    query,
+    where,
+    getDocs
+} from "firebase/firestore";
 import {db} from "../firebase/config";
 import firebase from "firebase/compat/app";
 import {AuthContext} from "../firebase/Auth";
@@ -13,6 +24,9 @@ import categories from "../mocks/categories";
 import Header from "../components/Header";
 
 import '../styles/GamePage.scss'
+import GameCard from "../components/GameCard";
+import moveToTop from "../utils/moveToTop";
+import GamesList from "../modules/GamesList";
 
 const GamePage = () => {
     let {gameId} = useParams();
@@ -21,16 +35,18 @@ const GamePage = () => {
     const [pending, setPending] = useState(true);
     const [gameData, setGameData] = useState(null);
     const [gameCategory, setGameCategory] = useState(null);
+    const [sameGames, setSameGames] = useState(null);
     const [rating, setRating] = useState(0)
     const [isFavorite, setFavorite] = useState(false)
 
     useEffect(() => {
         fetchGameData()
-    }, [])
+        moveToTop()
+    }, [gameId])
 
     const handleRating = (rate) => {
-        if (!currentUser){
-            navigate('/login', { replace: true })
+        if (!currentUser) {
+            navigate('/login', {replace: true})
             return
         }
         setRating(rate)
@@ -55,6 +71,7 @@ const GamePage = () => {
 
         if (docSnapGame.exists()) {
             await setGameData(docSnapGame.data())
+            fetchSameGames(docSnapGame.data().category_id)
             let categoryId = await categories.find(category => category.id === docSnapGame.data().category_id)
             await setGameCategory(categoryId.name)
             const sumRate = docSnapGame.data().rating?.reduce(
@@ -72,6 +89,14 @@ const GamePage = () => {
 
     }
 
+    async function fetchSameGames(categoryId) {
+        const collectionGames = query(collection(db, "games"), where("category_id", "==", categoryId));
+        const querySnapshot = await getDocs(collectionGames);
+        const filteredSameGames = querySnapshot.docs.filter((game)=>game.id !== gameId)
+        setSameGames(filteredSameGames)
+
+    }
+
     async function updateGameData(rate) {
         const docGame = doc(db, "games", gameId);
         const gameRateArr = gameData.rating
@@ -84,8 +109,8 @@ const GamePage = () => {
     }
 
     async function addToFavorites() {
-        if (!currentUser){
-            navigate('/login', { replace: true })
+        if (!currentUser) {
+            navigate('/login', {replace: true})
             return
         }
         const usersRef = collection(db, "users");
@@ -99,7 +124,7 @@ const GamePage = () => {
         return (
             <div>Loading...</div>
         )
-    
+
     return (
         <>
             <Header/>
@@ -118,7 +143,7 @@ const GamePage = () => {
                     <div className="game-favorites">
                         <Button
                             variant="contained"
-                            sx={{background:'#d27979',width: '100%'}}
+                            sx={{background: '#d27979', width: '100%'}}
                             color="error"
                             size="small"
                             onClick={addToFavorites}
@@ -126,11 +151,11 @@ const GamePage = () => {
                             isFavorite ?
                                 <>
                                     Added to favorites
-                                    <FavoriteIcon sx={{color: 'red',marginLeft:'15px'}}/>
+                                    <FavoriteIcon sx={{color: 'red', marginLeft: '15px'}}/>
                                 </> :
                                 <>
                                     Add to favorites
-                                    < FavoriteBorder sx={{color: 'red',marginLeft:'15px'}}/>
+                                    < FavoriteBorder sx={{color: 'red', marginLeft: '15px'}}/>
                                 </>
                         }
                         </Button>
@@ -140,6 +165,10 @@ const GamePage = () => {
                     <img className="game-preview" src={gameData.image} alt={gameData.name}/>
                     Place for the game here.
                 </div>
+            </div>
+            <div className="same-games-wrapper">
+                <h3 className="same-games-title">Same games</h3>
+               <GamesList gamesList={sameGames}/>
             </div>
 
         </>

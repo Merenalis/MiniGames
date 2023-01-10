@@ -8,6 +8,7 @@ import CategoriesSection from "../components/CategoriesSection";
 import GameCard from "../components/GameCard";
 
 import SearchComponent from "../components/SearchComponent";
+import GamesList from "../modules/GamesList";
 
 const HomePage = () => {
     const currentUser = useContext(AuthContext);
@@ -100,17 +101,7 @@ const HomePage = () => {
             <SearchComponent searchFunc={searchGamesData} sortGamesData={sortGamesData}/>
             <div className='home-content'>
                 <CategoriesSection updateData={updateData} categorySelect={categorySelect}/>
-                <div className="games-wrapper">
-                    {gamesData?.length ? gamesData.map((doc, index) => {
-                            return (
-                                <GameCard game={doc} key={index}/>
-                            )
-                        }) :
-                        <div>
-                            There are no games in this category...
-                        </div>
-                    }
-                </div>
+                <GamesList gamesList={gamesData}/>
             </div>
         </div>
     );
