@@ -4,6 +4,7 @@ import {AuthContext} from "../firebase/Auth";
 import {Link, useNavigate} from "react-router-dom";
 import app from "../firebase/config";
 import {Button, Fade} from "@mui/material";
+import customEvent from "../utils/custom-event";
 
 const Header = ({userData, fetchGamesData, setCategorySelect, showFavorites}) => {
     const currentUser = useContext(AuthContext);
@@ -17,6 +18,7 @@ const Header = ({userData, fetchGamesData, setCategorySelect, showFavorites}) =>
 
     const headerLogoClick = () => {
         navigate('/', {replace: true})
+        customEvent.trigger('setSortToDefault')
         setCategorySelect(0)
         fetchGamesData()
     };

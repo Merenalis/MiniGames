@@ -9,13 +9,15 @@ import {
     Select
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import _useCustomEventListener from "../utils/use-custom-event-listener";
 
 const SearchComponent = ({searchFunc,sortGamesData}) => {
     const [sort, setSort] = useState('createdAt');
 
+    _useCustomEventListener('setSortToDefault', () => setSort('createdAt'))
+
     const handleChange = (event) => {
         setSort(event.target.value);
-        console.log(event.target.value)
         sortGamesData(event.target.value)
     };
 

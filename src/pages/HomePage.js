@@ -53,15 +53,32 @@ const HomePage = () => {
     }
 
     async function sortGamesData(option) {
-        if (option === 'rating') {
-            const collectionGames = query(collection(db, "games"), orderBy(option), orderBy('createdAt', "desc"));
-            const querySnapshot = await getDocs(collectionGames);
-            setGamesData(querySnapshot.docs.reverse())
-        } else {
-            const collectionGames = query(collection(db, "games"), orderBy('createdAt'));
-            const querySnapshot = await getDocs(collectionGames);
-            setGamesData(querySnapshot.docs)
+        if (categorySelect) {
+            if (option === 'rating') {
+                const strAscending = [...gamesData].sort((a, b) =>
+                    a.data().rating.length > b.data().rating.length ? 1 : -1,
+                );
+                setGamesData(strAscending)
+            } else {
+                const strAscending = [...gamesData].sort((a, b) =>
+                    a.data().createdAt > b.data().createdAt ? 1 : -1,
+                );
+                setGamesData(strAscending)
+            }
         }
+        else {
+            if (option === 'rating') {
+                const collectionGames = query(collection(db, "games"), orderBy(option), orderBy('createdAt', "desc"));
+                const querySnapshot = await getDocs(collectionGames);
+                setGamesData(querySnapshot.docs.reverse())
+            } else {
+                const collectionGames = query(collection(db, "games"), orderBy('createdAt'));
+                const querySnapshot = await getDocs(collectionGames);
+                setGamesData(querySnapshot.docs)
+            }
+        }
+
+
     }
 
     async function searchGamesData(text) {
