@@ -38,7 +38,12 @@ const Header = ({userData, fetchGamesData, setCategorySelect, showFavorites}) =>
     }, [navigate])
 
     return (<div className='header-wrapper'>
-            <h3 className='header-title' onClick={headerLogoClick}>CSN-GAMES</h3>
+            <h1
+                className='header-title'
+                onClick={headerLogoClick}
+            >
+                CSN-GAMES
+            </h1>
             <div className="wrapper-buttons">
                 {currentUser ?
                     (<div className='header-username-wrapper'>

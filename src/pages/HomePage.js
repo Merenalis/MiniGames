@@ -96,19 +96,17 @@ const HomePage = () => {
         const querySnapshot = await getDocs(collectionGames);
         setGamesData(querySnapshot.docs)
     }
-
-    async function addGameTemplate() {
-        const citiesRef = collection(db, "games");
-        await setDoc(doc(citiesRef), {
-            name: "SCRAP METAL 3: INFERNAL TRAP",
-            category_id: 6,
-            description: "You can explore treacherous mountainsides or kick up tons of dust in dry lake beds in this gorgeous 3D driving game. A huge map is waiting for you and you can head in any direction " +
-                "you feel like. The choice is yours but be careful, otherwise your car will get totally trashed.",
-            image: 'https://images.crazygames.com/games/scrap-metal-3-infernal-trap/thumb-1555951535646.png?auto=format,compress&q=75&cs=strip',
-            rating: [],
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-    }
+    // async function addGameTemplate() {
+    //     const gamesRef = collection(db, "games");
+    //     await setDoc(doc(gamesRef), {
+    //         name: "MASTER CHESS",
+    //         category_id: 5,
+    //         description: "You can play against the computer or take on a friend in this challenging chess game. Just be sure to play as quickly as you can. Each passing second that it takes to get a checkmate will lower your score!",
+    //         image: 'https://gameforge.com/de-DE/littlegames/includes/images/games/10524_5eb3f13a9b0f5.jpg',
+    //         rating: [],
+    //         createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    //     });
+    // }
 
     return (
         <div>
