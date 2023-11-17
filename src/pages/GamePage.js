@@ -11,7 +11,7 @@ import {
     arrayRemove,
     query,
     where,
-    getDocs
+    getDocs, orderBy
 } from "firebase/firestore";
 import {db} from "../firebase/config";
 import firebase from "firebase/compat/app";
@@ -28,6 +28,9 @@ import GameCard from "../components/GameCard";
 import moveToTop from "../utils/moveToTop";
 import GamesList from "../modules/GamesList";
 
+const EASY = 2
+const OUTDOOR_GAMES = 'outdoor'
+
 const GamePage = () => {
     let {gameId} = useParams();
     const currentUser = useContext(AuthContext);
@@ -36,11 +39,13 @@ const GamePage = () => {
     const [gameData, setGameData] = useState(null);
     const [gameCategory, setGameCategory] = useState(null);
     const [sameGames, setSameGames] = useState(null);
+    const [personalGames, setPersonalGames] = useState(null);
     const [rating, setRating] = useState(0)
     const [isFavorite, setFavorite] = useState(false)
 
     useEffect(() => {
         fetchGameData()
+        fetchPersonalGamesData()
         moveToTop()
     }, [gameId])
 
@@ -86,7 +91,6 @@ const GamePage = () => {
         } else {
             console.log("Document does not exist")
         }
-
     }
 
     async function fetchSameGames(categoryId) {
@@ -95,6 +99,17 @@ const GamePage = () => {
         const filteredSameGames = querySnapshot.docs.filter((game)=>game.id !== gameId)
         setSameGames(filteredSameGames)
 
+    }
+
+    async function fetchPersonalGamesData() {
+        const gameType = localStorage.getItem('gameType') || OUTDOOR_GAMES
+        const gameDifficulty = localStorage.getItem('gameDifficulty') || EASY
+
+        const collectionGames = query(collection(db, "games"), orderBy('difficulty'), orderBy('createdAt'),
+            where("type", "==", gameType),
+            where("difficulty", "<=", Number(gameDifficulty)));
+        const querySnapshot = await getDocs(collectionGames);
+        setPersonalGames(querySnapshot.docs)
     }
 
     async function updateGameData(rate) {
@@ -169,6 +184,10 @@ const GamePage = () => {
             <div className="same-games-wrapper">
                 <h3 className="same-games-title">Same games</h3>
                <GamesList gamesList={sameGames}/>
+            </div>
+            <div className="same-games-wrapper">
+                <h3 className="same-games-title">Games you might like</h3>
+               <GamesList gamesList={personalGames}/>
             </div>
 
         </>

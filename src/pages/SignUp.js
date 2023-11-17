@@ -15,7 +15,7 @@ const SignUp = () => {
 
     const handleSignUp = useCallback(async event =>{
         event.preventDefault()
-        const {email,password,password2, username} = event.target.elements;
+        const {email,password,password2, username, yearsOld} = event.target.elements;
 
         if (username.value.length === 0){
             setAlertState({
@@ -34,7 +34,7 @@ const SignUp = () => {
             const data = await app
                 .auth()
                 .createUserWithEmailAndPassword(email.value,password.value);
-            await setDoc(doc(db, "users", data.user.uid), {name: username.value,favorites:[null]});
+            await setDoc(doc(db, "users", data.user.uid), { name: username.value,favorites:[null], yearsOld: yearsOld.value });
             setAlertState({
                 ...alertState, show: true, text: 'You have created your account successfully!',type: 'success'
             })
@@ -92,6 +92,15 @@ const SignUp = () => {
                             label="Name"
                             name="username"
                             autoComplete="username"
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="yearsOld"
+                            label="Years Old"
+                            name="yearsOld"
+                            autoComplete="yearsOld"
                         />
                         <TextField
                             margin="normal"
